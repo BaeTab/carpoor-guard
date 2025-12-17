@@ -80,7 +80,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-900 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <header className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -147,6 +147,8 @@ function App() {
                   <Diagnosis result={result} />
                 </section>
 
+
+
                 {/* Reset Button */}
                 <div className="text-center pt-8">
                   <button
@@ -162,8 +164,9 @@ function App() {
 
             {/* FAQ Section */}
             <FAQ />
-            {/* AdFit Banner */}
-            <div className="max-w-4xl mx-auto px-4">
+
+            {/* AdFit Banner (Bottom) */}
+            <div className="max-w-4xl mx-auto px-4 mt-8">
               <KakaoAdFit />
             </div>
           </>
