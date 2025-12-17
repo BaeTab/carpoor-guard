@@ -10,6 +10,7 @@ import FAQ from './components/FAQ';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
 import AdModal from './components/AdModal';
+import KakaoAdFit from './components/KakaoAdFit';
 import { calculateCarCosts, type CarInputData, type CalculationResult } from './utils/carLogic';
 
 function App() {
@@ -161,10 +162,15 @@ function App() {
 
             {/* FAQ Section */}
             <FAQ />
+            {/* AdFit Banner */}
+            <div className="max-w-4xl mx-auto px-4">
+              <KakaoAdFit />
+            </div>
           </>
         )}
 
-        <footer className="mt-16 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+        {/* Footer */}
+        <footer className="mt-12 py-8 text-center text-sm text-slate-500 border-t border-slate-800/50">
           <p className="mb-2">
             ⚠️ 본 계산기는 참고용이며, 실제 비용은 개인 상황에 따라 다를 수 있습니다.
           </p>
