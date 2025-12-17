@@ -52,7 +52,7 @@
 
 ### 1. 저장소 클론
 ```bash
-git clone https://github.com/yourusername/poor-guard.git
+git clone https://github.com/baetab/poor-guard.git
 cd poor-guard
 ```
 
