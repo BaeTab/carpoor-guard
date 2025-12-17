@@ -228,7 +228,10 @@ npm run deploy
 
 ## 📝 라이선스
 
-MIT License - 자유롭게 사용하세요!
+이 프로젝트의 소스 코드는 **비영리 목적(Non-Commercial)**으로만 사용할 수 있습니다.
+개인적인 학습 및 연구 목적으로는 자유롭게 수정 및 배포가 가능하나, **상업적 이용은 엄격히 금지**됩니다.
+
+Copyright (c) 2025 Car Poor Guard. All rights reserved.
 
 ## 🤝 기여
 
