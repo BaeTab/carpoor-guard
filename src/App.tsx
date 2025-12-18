@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Car, RotateCcw } from 'lucide-react';
+import { Car, RotateCcw, BookOpen } from 'lucide-react';
 import { logEvent } from 'firebase/analytics';
 import { analytics } from './firebase';
 import CarInput from './components/CarInput';
@@ -9,15 +9,21 @@ import LandingSection from './components/LandingSection';
 import FAQ from './components/FAQ';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
+import BlogList from './components/BlogList';
+import BlogPostDetail from './components/BlogPostDetail';
 import AdModal from './components/AdModal';
 import KakaoAdFit from './components/KakaoAdFit';
 import { calculateCarCosts, type CarInputData, type CalculationResult } from './utils/carLogic';
+import { BLOG_POSTS } from './data/blogPosts';
+
+type PageType = 'home' | 'privacy' | 'terms' | 'blog' | 'blog-detail';
 
 function App() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [pendingResult, setPendingResult] = useState<CalculationResult | null>(null);
   const [showAdModal, setShowAdModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
+  const [currentPage, setCurrentPage] = useState<PageType>('home');
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   // Track page view
   useEffect(() => {
@@ -28,6 +34,20 @@ function App() {
       });
     }
   }, []);
+
+  // Back button handling for SPA history
+  useEffect(() => {
+    const handlePopState = () => {
+      // 심플한 뒤로가기 처리를 위해 현재는 생략하거나
+      // 추후 react-router-dom 도입 시 본격적으로 처리
+      if (currentPage !== 'home') {
+        // setCurrentPage('home'); // 브라우저 뒤로가기 시 홈으로? (간단 구현)
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [currentPage]);
+
 
   const handleCalculate = (data: CarInputData) => {
     const calculationResult = calculateCarCosts(data);
@@ -73,8 +93,14 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const showPage = (page: 'home' | 'privacy' | 'terms') => {
+  const showPage = (page: PageType) => {
     setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePostClick = (id: string) => {
+    setSelectedPostId(id);
+    setCurrentPage('blog-detail');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,7 +108,7 @@ function App() {
     <div className="min-h-screen bg-slate-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <header className="text-center mb-12">
+        <header className="text-center mb-12 cursor-pointer" onClick={() => showPage('home')}>
           <div className="flex items-center justify-center gap-3 mb-4">
             <Car className="w-12 h-12 text-indigo-400" />
             <h1 className="text-4xl md:text-5xl font-bold gradient-text">
@@ -97,27 +123,27 @@ function App() {
           </p>
         </header>
 
-        {/* Page Content */}
+        {/* Page Content Switcher */}
         {currentPage === 'privacy' ? (
           <div>
-            <button
-              onClick={() => showPage('home')}
-              className="mb-6 text-indigo-400 hover:text-indigo-300 transition-colors"
-            >
-              ← 홈으로 돌아가기
-            </button>
+            <button onClick={() => showPage('home')} className="mb-6 text-indigo-400 hover:text-indigo-300 transition-colors">← 홈으로 돌아가기</button>
             <PrivacyPolicy />
           </div>
         ) : currentPage === 'terms' ? (
           <div>
-            <button
-              onClick={() => showPage('home')}
-              className="mb-6 text-indigo-400 hover:text-indigo-300 transition-colors"
-            >
-              ← 홈으로 돌아가기
-            </button>
+            <button onClick={() => showPage('home')} className="mb-6 text-indigo-400 hover:text-indigo-300 transition-colors">← 홈으로 돌아가기</button>
             <TermsOfService />
           </div>
+        ) : currentPage === 'blog' ? (
+          <div>
+            <button onClick={() => showPage('home')} className="mb-6 text-indigo-400 hover:text-indigo-300 transition-colors">← 홈으로 돌아가기</button>
+            <BlogList onPostClick={handlePostClick} />
+          </div>
+        ) : currentPage === 'blog-detail' && selectedPostId ? (
+          <BlogPostDetail
+            post={BLOG_POSTS.find(p => p.id === selectedPostId)!}
+            onBack={() => showPage('blog')}
+          />
         ) : (
           <>
             {/* Landing Section */}
@@ -147,8 +173,6 @@ function App() {
                   <Diagnosis result={result} />
                 </section>
 
-
-
                 {/* Reset Button */}
                 <div className="text-center pt-8">
                   <button
@@ -177,21 +201,26 @@ function App() {
           <p className="mb-2">
             ⚠️ 본 계산기는 참고용이며, 실제 비용은 개인 상황에 따라 다를 수 있습니다.
           </p>
-          <div className="flex items-center justify-center gap-4 mb-3">
+
+          {/* Footer Navigation */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
             <button
-              onClick={() => showPage('privacy')}
-              className="hover:text-indigo-400 transition-colors"
+              onClick={() => showPage('blog')}
+              className="flex items-center gap-1 text-slate-300 hover:text-indigo-400 transition-colors font-medium"
             >
+              <BookOpen className="w-4 h-4" />
+              자동차 꿀팁(Blog)
+            </button>
+            <span className="text-slate-700">|</span>
+            <button onClick={() => showPage('privacy')} className="hover:text-indigo-400 transition-colors">
               개인정보처리방침
             </button>
-            <span>|</span>
-            <button
-              onClick={() => showPage('terms')}
-              className="hover:text-indigo-400 transition-colors"
-            >
+            <span className="text-slate-700">|</span>
+            <button onClick={() => showPage('terms')} className="hover:text-indigo-400 transition-colors">
               이용약관
             </button>
           </div>
+
           <p className="mb-2">
             광고/제휴 문의: <a href="mailto:b_h_woo@naver.com" className="text-indigo-400 hover:underline">b_h_woo@naver.com</a>
           </p>
